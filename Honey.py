@@ -12,13 +12,13 @@ from API.config import TOKEN,OPENAI_API_KEY
 bot = telebot.TeleBot(TOKEN)
 openai_api_key = OPENAI_API_KEY
 
-BOT_ROLE = "HoneyMoon mahsuloti haqida malumotberuvchi chatbo'tsa uzbek tilida gaplash"
-
+BOT_ROLE = "HoneyMoon mahsuloti haqida malumot beruvchi chatbo'tsan uzbek tilida gaplash"
+chek = "savollarimga aniq va to'liq javob ber"
 CHAT_LOG_DIR = "chat_logs"
 chat_log = []
 
 
-pdf_path = "Data/HoneyMoon.pdf"
+pdf_path = "Data/HoneyMoon1.pdf"
 reader = PyPDF2.PdfReader(pdf_path)
 raw_text = ""
 for page in reader.pages:
@@ -38,7 +38,7 @@ def handle_message(message):
     user_id = message.from_user.id
     user_name = message.from_user.first_name
 
-    query = f"bot role:{BOT_ROLE}\n\n query:{message.text}"
+    query = f"bot role:{BOT_ROLE}\n\n query:{message.text}\n{chek}"
     print(query)
     user_file = os.path.join(CHAT_LOG_DIR, f"{user_name}_{user_id}.txt")
     if not os.path.exists(CHAT_LOG_DIR):
