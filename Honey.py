@@ -1,3 +1,5 @@
+import json
+import os
 import telebot
 import PyPDF2
 from langchain.embeddings import OpenAIEmbeddings
@@ -9,6 +11,13 @@ from API.config import TOKEN,OPENAI_API_KEY
 
 bot = telebot.TeleBot(TOKEN)
 openai_api_key = OPENAI_API_KEY
+
+BOT_ROLE = "HoneyMoon mahsuloti haqida malumotberuvchi chatbo'tsa uzbek tilida gaplash"
+
+CHAT_LOG_DIR = "chat_logs"
+chat_log = []
+
+
 pdf_path = "Data/HoneyMoon.pdf"
 reader = PyPDF2.PdfReader(pdf_path)
 raw_text = ""
@@ -25,9 +34,24 @@ chain = load_qa_chain(OpenAI(), chain_type="stuff")
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
-    query = message.text
+
+    user_id = message.from_user.id
+    user_name = message.from_user.first_name
+
+    query = f"bot role:{BOT_ROLE}\n\n query:{message.text}"
+    print(query)
+    user_file = os.path.join(CHAT_LOG_DIR, f"{user_name}_{user_id}.txt")
+    if not os.path.exists(CHAT_LOG_DIR):
+        os.mkdir(CHAT_LOG_DIR)
+
     docs = docsearch.similarity_search(query)
     result = chain.run(input_documents=docs, question=query)
     bot.send_message(message.chat.id, result)
+
+    with open(user_file, "a") as f:
+        f.write(f"{user_name}: {query}\n")
+        f.write(f"Bot: {result}\n")
+
+    chat_log.append((query, result))
 
 bot.polling()
