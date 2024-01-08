@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 1. Vectorise the sales response csv data
-loader = CSVLoader(file_path="Data/Sales_response.csv")
+loader = CSVLoader(file_path="Data/HoneyMoon.csv")
 documents = loader.load()
 
 embeddings = OpenAIEmbeddings()
@@ -33,27 +33,25 @@ def retrieve_info(query):
 llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k-0613")
 
 template = """
-You are a world class business development representative. 
-I will share a prospect's message with you and you will give me the best answer that 
-I should send to this prospect based on past best practies, 
-and you will follow ALL of the rules below:
+Siz HoneyMoon mahsulotlarini qo'llab-quvvatlash bo'yicha mutaxassissiz. 
+Sizning vazifangiz - mijozlarning savollariga aniq va tushunarli javoblar berish, HoneyMoon mahsulotining xususiyatlari va afzalliklarini hisobga olib.
+Men sizga istiqbolli mijozning xabarini beraman va siz, HoneyMoon mahsulotining o'tmishdagi eng yaxshi amaliyotlariga asoslanib, 
+ushbu mijozga yuborishim kerak bo'lgan eng yaxshi javobni berishingiz kerak. 
+Quyida keltirilgan qoidalarga rioya qilishingiz kerak:
 
-1/ Response should be very similar or even identical to the past best practies, 
-in terms of length, ton of voice, logical arguments and other details
+1/ Javob o'tmishdagi eng yaxshi amaliyotlar bilan juda o'xshash yoki hatto bir xil bo'lishi kerak, 
+uzunlik, ovoz ohangi, mantiqiy dalillar va boshqa tafsilotlar jihatidan.
 
-2/ If the best practice are irrelevant, then try to mimic the style of the best practice to prospect's message
+2/ Agar eng yaxshi amaliyotlar tegishli bo'lmasa, unda mijozning xabariga eng yaxshi amaliyotlar uslubini taqlid qilib javob bering.
 
-Below is a message I received from the prospect:
+Quyida men olgan mijozning xabari keltirilgan:
 {message}
 
-Here is a list of best practies of how we normally respond to prospect in similar scenarios:
-{best_practice}
-
-Please write the best response that I should send to this prospect:
+Iltimos, ushbu ma'lumotlarni hisobga olgan holda, mijozga yuborishim kerak bo'lgan eng yaxshi javobni yozing:
 """
 
 prompt = PromptTemplate(
-    input_variables=["message", "best_practice"],
+    input_variables=["message"],
     template=template
 )
 
